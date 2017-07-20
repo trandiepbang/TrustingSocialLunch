@@ -7,20 +7,15 @@ function save(data, callback) {
     savePromise.then(callback);
 }
 
-function find(callback) {
-    console.log("trigger search");
-    this.dataModel.find({
+function find(date_time, callback) {
+    const op = date_time === null ? {} : {
         date: {
-            $gte: new Date()
+            $gte: date_time
         }
-    }, callback);
+    };
+    console.log("op " , op);
+    this.dataModel.find(op, callback);
 }
-
-
-function deleteData() {
-
-}
-
 
 module.exports = function (dataModel) {
     if (dataModel === null) {
@@ -29,7 +24,6 @@ module.exports = function (dataModel) {
 
     this.dataModel = dataModel;
     this.save = save;
-    this.delete = deleteData;
     this.find = find;
 
     return this;

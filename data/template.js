@@ -4,7 +4,6 @@ function generate({
     img
 }) {
     const template = {
-        "fallback": "Có lỗi xảy ra",
         "color": "#36a64f",
         "pretext": `${title}`,
         "title": `${title}`,
@@ -16,6 +15,22 @@ function generate({
     }
     return template;
 }
+
+function generateReceipt({
+    name,
+    pic,
+    food
+}) {
+    const template = {
+        "color": "#36a64f",
+        "title": `${name}`,
+        "text": `${food}`,
+        "footer": "Hanna lunch"
+    }
+    return template;
+}
+
 module.exports = {
     generate,
+    generateReceipt,
 };

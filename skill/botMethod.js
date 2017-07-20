@@ -1,5 +1,6 @@
 let bot = null;
 let lunchOp = null;
+let userName = {};
 
 const template = require('../data/template.js');
 const com_trua = require('../data/comtrua.js');
@@ -8,7 +9,7 @@ function getListUsers(mustOnline = false, callback) {
     let online_user = [];
 
     this.bot.api.users.list({}, function (err, response) {
-        console.log(response)
+        // console.log(response)
         if (response.ok) {
             if (response.members !== null && response.members.length > 0) {
                 response.members.forEach(function (user_data, i, array) {
@@ -28,12 +29,18 @@ function getListUsers(mustOnline = false, callback) {
                             }
                             if (i === array.length - 1) {
                                 if (typeof callback !== 'undefined') {
-                                    callback(online_user);
+                                    setTimeout(() => {
+                                        callback(online_user);
+                                    }, 5000);
                                 }
                             }
                         });
                     }
                 });
+            } else {
+                if (typeof callback !== 'undefined') {
+                    callback(online_user);
+                }
             }
         }
     });
@@ -62,42 +69,77 @@ function send(user_id, send_data, _callback) {
     }, function (err, convo) {
         if (!err && convo) {
             convo.addQuestion('Bạn có ăn cơm không ? ', [{
-                pattern: botMethod.utterances.yes,
+                pattern: /['yes','okay','um','coá','có','yess','yeeess']/gi,
                 callback: function (response, convo) {
                     // this.bot.reply(response,send_data);
-                    console.log(response);
+                    // console.log(response);
                     // convo.say("asdasd",send_data)
-                    botMethod.reply(response, send_data);
+                    botMethod.reply(response, {
+                        attachments: send_data
+                    });
 
                     convo.addQuestion('Bạn muốn ăn gì ? ', [{
-                        pattern: /.*/,
+                        pattern: /.*/gi,
                         callback: function (response, convo) {
-                            console.log(response);
+                            // console.log(response);
+
                             lunchOp.save({
-                                userid:response.id,
-                                food:response.text
+                                userid: response.user,
+                                name: getUsername(response.user),
+                                food: response.text
                             });
                             convo.say("Cám ơn rất nhiều");
                             convo.next();
-                            
+
                             _callback(user_id, true);
                         }
                     }]);
                     convo.next();
                 }
             }, {
-                pattern: botMethod.utterances.no,
+                pattern: /['không' , 'kô' , 'ko' , 'ko co' , 'kô' , 'no' , 'nope' , 'nopes' ]/gi,
                 callback: function (response, convo) {
                     // this.bot.reply(response,send_data);
-                    convo.say("zxczxc", send_data)
+                    convo.say("Okie cảm ơn bạn");
                     convo.next();
+                    _callback(user_id, false);
                 }
             }, ]);
         }
     });
 }
 
-module.exports = function (bot,lunchOp) {
+function makeAnnounce(channel_id, text, attachments) {
+    this.bot.say({
+        text: text,
+        attachments: attachments,
+        channel: channel_id
+    });
+}
+
+
+function buildUsername(callback) {
+    getListUsers(true, (list_user) => {
+        console.log("#list user", list_user.length)
+        list_user.forEach(function (user_data, i, array) {
+            userName[user_data.id] = user_data.real_name || user_data.name;
+            if (i === array.length - 1) {
+                console.log("#Init : build username success");
+                // console.log(userName)
+                callback(true);
+            }
+        });
+    });
+}
+
+function getUsername(id) {
+    if (userName === null || typeof userName[id] === 'undefined') {
+        return null;
+    } else {
+        return userName[id];
+    }
+}
+module.exports = function (bot, lunchOp) {
     if (bot === null || lunchOp === null) {
         console.log("something is null");
         return;
@@ -108,6 +150,9 @@ module.exports = function (bot,lunchOp) {
     this.getListUsers = getListUsers;
     this.getMenu = getMenu;
     this.send = send;
+    this.makeAnnounce = makeAnnounce;
+    this.buildUsername = buildUsername;
+
 
     return this;
 };
