@@ -9,38 +9,65 @@ const controller = Botkit.slackbot({});
 const bot = controller.spawn({
     token: config.botToken
 });
-const botMethod = require('./skill/botMethod.js')(bot);
 const lunchOp = require('./skill/lunchOp.js')(DataModel);
+const botMethod = require('./skill/botMethod.js')(bot, lunchOp);
+
+
+let askAgainTimeOut = null;
+let closeDealTimeout = null;
+let user_list = ['U2ZPTV09M'];
 
 
 controller.on('direct_mention', function (bot, message) {
     console.log(message);
     bot.reply(message, 'Only the person who used the slash command can see this.');
 });
-controller.on('direct_message', function (bot, message) {
-    lunchOp.save({userid:"asdasd",food:"asdasd",name:"asdasd"});
-    lunchOp.find();
-});
+
 
 setTimeout(function () {
     bot.startRTM(function (err, bot, payload) {
-        if (err) {
-            throw err;
-        }
+        console.log(err);
+        startAsking();
     });
 }, 2000);
 
-// botMethod.getMenu("monday", (menu_list) => {
-//     const menu = {
-//         attachments: menu_list
-//     };
-//     console.log(botMethod.send('U2ZPTV09M', menu));
-//     botMethod.getListUsers(true, (online_list_user) => {
-//         online_list_user.forEach(function (user_data, i, array) {
-//             // const id = user_data.id; 
-//             console.log(user_data); 
-//             // botMethod.reply(id, menu)
-//             // console.log(id);   
-//         });
-//     });
-// });
+function startAsking() {
+    botMethod.getMenu("monday", (menu_list) => {
+        const menu = {
+            attachments: menu_list
+        };
+        botMethod.send('U2ZPTV09M', menu, (userid, isAccept) => {
+            console.log("call back");
+            if (isAccept) {
+                // user_list
+                user_list.splice(user_list.indexOf('U2ZPTV09M'), 1);
+                console.log(userid);
+            } else {
+
+            }
+        });
+
+        if (askAgainTimeOut == null) {
+            setAskAgain();
+        } else {
+            setCloseDeal();
+        }
+    });
+}
+
+function setAskAgain() {
+    askAgainTimeOut = setTimeout(function () {
+        startAsking();
+    }, config.askAgainTimeOut);
+}
+
+function setCloseDeal() {
+    closeDealTimeout = setTimeout(function () {
+        user_list = [];
+        console.log("finished close deal ");
+        botMethod.find(function(error,data){
+            console.log(data);
+        });
+
+    }, config.closeDealTimeout);
+}

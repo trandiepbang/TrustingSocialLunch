@@ -3,19 +3,22 @@ let dataModel = null;
 function save(data, callback) {
     const datamodel = new this.dataModel(data);
     const savePromise = datamodel.save();
+    console.log("trigger save data");
     savePromise.then(callback);
 }
 
-function deleteData() {
-    
+function find(callback) {
+    console.log("trigger search");
+    this.dataModel.find({
+        date: {
+            $gte: new Date()
+        }
+    }, callback);
 }
 
-function find() {
-    console.log("trigger search");
-    this.dataModel.find({}, function (err, docs) {
-        // docs.forEach
-        console.log(docs);
-    });
+
+function deleteData() {
+
 }
 
 
