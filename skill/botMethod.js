@@ -5,6 +5,10 @@ let userName = {};
 const template = require('../data/template.js');
 const com_trua = require('../data/comtrua.js');
 
+function getLunchListData () {
+    return com_trua.com.monday;
+
+}
 function getListUsers(mustOnline = false, callback) {
     let online_user = [];
 
@@ -47,11 +51,11 @@ function getListUsers(mustOnline = false, callback) {
 }
 
 function getMenu(date, callback) {
-    const lunch_list = com_trua.com.monday;
-    let food_list = [];
+    const lunch_list = getLunchListData();
+    let food_list = "";
 
     function com_data(com_data, i, array) {
-        food_list.push(template.generate(com_data))
+        food_list += template.generate(com_data) + "\n";
         if (i === array.length - 1) {
             callback(food_list);
         }
@@ -69,14 +73,13 @@ function send(user_id, send_data, _callback) {
     }, function (err, convo) {
         if (!err && convo) {
             convo.addQuestion('Bạn có ăn cơm không ? ', [{
-                pattern: /['yes','okay','um','coá','có','yess','yeeess']/gi,
+                pattern: /(yes|okay|ok|um|coá|có|yess|yeess|ừm|uh|co)/gi,
                 callback: function (response, convo) {
                     // this.bot.reply(response,send_data);
                     // console.log(response);
                     // convo.say("asdasd",send_data)
-                    botMethod.reply(response, {
-                        attachments: send_data
-                    });
+                    console.log("menu " , send_data);
+                    botMethod.reply(response,send_data);
 
                     convo.addQuestion('Bạn muốn ăn gì ? ', [{
                         pattern: /.*/gi,
@@ -97,7 +100,7 @@ function send(user_id, send_data, _callback) {
                     convo.next();
                 }
             }, {
-                pattern: /['không' , 'kô' , 'ko' , 'ko co' , 'kô' , 'no' , 'nope' , 'nopes' ]/gi,
+                pattern: /(không|kô|ko|ko co|kô|no|nope|nopes|kô)/gi,
                 callback: function (response, convo) {
                     // this.bot.reply(response,send_data);
                     convo.say("Okie cảm ơn bạn");
@@ -111,8 +114,8 @@ function send(user_id, send_data, _callback) {
 
 function makeAnnounce(channel_id, text, attachments) {
     this.bot.say({
-        text: text,
-        attachments: attachments,
+        text: text + "\n" + attachments,
+        // attachments: attachments,
         channel: channel_id
     });
 }
@@ -152,6 +155,7 @@ module.exports = function (bot, lunchOp) {
     this.send = send;
     this.makeAnnounce = makeAnnounce;
     this.buildUsername = buildUsername;
+    this.getLunchListData = getLunchListData;
 
 
     return this;
