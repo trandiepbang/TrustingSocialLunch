@@ -1,7 +1,6 @@
 {
   "name": "ts_lunch_bot",
   "version": "1.0.0",
-  "description": "",
   "main": "bot.js",
   "dependencies": {
     "botkit": "^0.5.5",
@@ -27,5 +26,6 @@
   "bugs": {
     "url": "https://github.com/howdyai/botkit-starter-slack/issues"
   },
-  "homepage": "https://github.com/howdyai/botkit-starter-slack#readme"
+  "homepage": "https://github.com/howdyai/botkit-starter-slack#readme",
+  "description": ""
 }
