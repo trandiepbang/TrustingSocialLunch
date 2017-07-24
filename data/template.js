@@ -10,12 +10,6 @@ function generateReceipt({
     pic,
     food
 }) {
-    // const template = {
-    //     "color": "#36a64f",
-    //     "title": `${name}`,
-    //     "text": `${food}`,
-    //     "footer": "Hanna lunch"
-    // }
     return `${name} - ${food}`;
 }
 

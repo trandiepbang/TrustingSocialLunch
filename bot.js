@@ -4,7 +4,8 @@ const func_ = require('./skill/function.js');
 const template = require('./data/template.js');
 
 const mongoose = func_.mongoose;
-const cron = func_.cron;
+const later = func_.later;
+
 const natural = func_.natural;
 
 mongoose.connect('mongodb://localhost/ts_lunch');
@@ -17,12 +18,20 @@ const bot = controller.spawn({
 const lunchOp = require('./skill/lunchOp.js')(DataModel);
 const botMethod = require('./skill/botMethod.js')(bot, lunchOp);
 
-
 let askAgainTimeOut = null;
-
 let closeDealTimeout = null;
 let user_list = [];
+let menu_count = {};
+//Bang d
 
+function resetMenu() {
+
+    menu_count = {};
+    user_list = [];
+    askAgainTimeOut = null;
+    closeDealTimeout = null;
+
+}
 
 controller.on('direct_mention', function (bot, message) {
     console.log(message);
@@ -34,24 +43,40 @@ controller.on('direct_mention', function (bot, message) {
 
     buildingUserList();
 });
-
-
+//
 setTimeout(function () {
     bot.startRTM(function (err, bot, payload) {
-        var rule = new cron.RecurrenceRule();
-        rule.minute = 1;
-
-        buildingUserList();
-        
-        // cron.scheduleJob(rule, function(){
-        //     console.log("run ");
-        // });
-        
+        const time = 'at 5:00pm on Monday,Tuesday,Wednesday,Thursday,Friday,Sunday';
+        const t = later.parse.text(time);
+        later.setInterval(function () {
+            if (botMethod.getDay() === 0 || botMethod.getDay() === 7) {
+                config.closeDealTimeout = '57600000';
+                config.setAskAgain = '54000000';
+            } else {
+                config.closeDealTimeout = '1800000';
+                config.setAskAgain = '900000';
+            }
+            start();
+        }, t);
     });
 }, 2000);
 
+function start() {
+    botMethod.channelUsersList((users_id_list) => {
+        if (users_id_list !== null &&
+            users_id_list.length > 0) {
+            user_list = users_id_list;
+            buildingUserList();
+
+        }
+        console.log("#user id list");
+        console.log(users_id_list);
+    });
+}
+
+
+
 function buildingUserList() {
-    user_list = config.users;
     if (user_list !== null && user_list.length > 0) {
         botMethod.buildUsername((isSuccess) => {
             startAsking();
@@ -60,14 +85,23 @@ function buildingUserList() {
 }
 
 function startAsking() {
-    botMethod.getMenu("monday", (menu_list) => {
+    let day_number = botMethod.getDay();
+    if (day_number === 6 || day_number === 7 || day_number === 0) {
+        day_number = 1;
+    } else {
+        day_number += 1; 
+    }
+
+    const day_in_week = botMethod.getDayInWeek(day_number);
+    botMethod.getMenu(day_in_week, (menu_list) => {
         if (user_list.length < 1) {
             return;
         }
+        //bang
         user_list.forEach(function (user_id, i, array) {
             botMethod.send(user_id, menu_list, (userid, isAccept) => {
                 console.log("call back " + isAccept);
-                console.log(userid);
+                console.log(userid); 
                 user_list.splice(user_list.indexOf(user_id), 1);
                 console.log("Current user left ", user_list);
             });
@@ -116,12 +150,6 @@ function setCloseDeal() {
     }, config.closeDealTimeout);
 }
 
-
-let menu_count = {};
-
-function resetMenu () {
-    menu_count = {};
-}
 function SummarizeTotal(list_data) {
     const lunch_list = botMethod.getLunchListData();
     let food_list = [];
@@ -175,9 +203,8 @@ function SummarizeTotal(list_data) {
 
                             final_list += "Tổng tiền phải trả : " + total + ".000 VND";
                             resetMenu();
-
                             botMethod.makeAnnounce(config.channel, 'Hoá đơn !!!', final_list);
-                            
+
                         }, 2000);
                     });
                 }

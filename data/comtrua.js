@@ -1,5 +1,4 @@
 const comtrua = {
-    //"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
     com: {
         monday: [{
                 title: "Cơm chiên thập cẩm",

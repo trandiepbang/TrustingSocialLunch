@@ -4,11 +4,32 @@ let userName = {};
 
 const template = require('../data/template.js');
 const com_trua = require('../data/comtrua.js');
+const config = require('../config/config.js');
 
-function getLunchListData () {
+
+function getLunchListData() {
     return com_trua.com.monday;
-
 }
+
+function channelUsersList(callback) {
+    let members_list = [];
+    this.bot.api.channels.list({}, (err, response) => {
+        const rep = response;
+        if (rep.ok) {
+            rep.channels.forEach((channel_data, index, array) => {
+                const channel_id = channel_data.id;
+                if (channel_id === config.channel) {
+                    members_list = channel_data.members;
+                }
+
+                if (index === array.length - 1) {
+                    callback(members_list);
+                }
+            });
+        }
+    });
+}
+
 function getListUsers(mustOnline = false, callback) {
     let online_user = [];
 
@@ -78,8 +99,8 @@ function send(user_id, send_data, _callback) {
                     // this.bot.reply(response,send_data);
                     // console.log(response);
                     // convo.say("asdasd",send_data)
-                    console.log("menu " , send_data);
-                    botMethod.reply(response,send_data);
+                    console.log("menu ", send_data);
+                    botMethod.reply(response, send_data);
 
                     convo.addQuestion('Bạn muốn ăn gì ? ', [{
                         pattern: /.*/gi,
@@ -142,6 +163,25 @@ function getUsername(id) {
         return userName[id];
     }
 }
+
+
+function getDay() {
+    return new Date().getDay();
+}
+
+function getDayInWeek(day) {
+    var weekday = new Array(7);
+    weekday[0] = "sunday";
+    weekday[1] = "monday";
+    weekday[2] = "tuesday";
+    weekday[3] = "wednesday";
+    weekday[4] = "thursday";
+    weekday[5] = "friday";
+    weekday[6] = "saturday";
+    var n = weekday[day];
+    return n;
+}
+
 module.exports = function (bot, lunchOp) {
     if (bot === null || lunchOp === null) {
         console.log("something is null");
@@ -154,6 +194,7 @@ module.exports = function (bot, lunchOp) {
     this.getMenu = getMenu;
     this.send = send;
     this.makeAnnounce = makeAnnounce;
+    this.channelUsersList = channelUsersList;
     this.buildUsername = buildUsername;
     this.getLunchListData = getLunchListData;
 

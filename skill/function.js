@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
-const cron = require('node-schedule');
+const later = require('later');
 const natural = require('natural');
-
 
 mongoose.Promise = global.Promise;
 
@@ -31,6 +30,6 @@ module.exports = {
     getDate,
     natural,
     moment,
-    cron,
-    dataModel
+    dataModel,
+    later
 };
