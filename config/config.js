@@ -1,0 +1,9 @@
+const config = {
+    botToken: '',
+    // askAgainTimeOut:'900000',
+    // closeDealTimeout:'1800000',
+    askAgainTimeOut: '40000',
+    closeDealTimeout: '65000',
+    channel: 'C6CL1CFB6',
+};
+module.exports = config;

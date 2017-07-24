@@ -1,0 +1,31 @@
+{
+  "name": "ts_lunch_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "dependencies": {
+    "botkit": "^0.5.5",
+    "json-server": "^0.11.2",
+    "knex": "^0.13.0",
+    "later": "^1.2.0",
+    "moment": "^2.18.1",
+    "mongoose": "^4.11.3",
+    "mysql": "^2.13.0",
+    "natural": "^0.5.4",
+    "node-schedule": "^1.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/howdyai/botkit-starter-slack.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/howdyai/botkit-starter-slack/issues"
+  },
+  "homepage": "https://github.com/howdyai/botkit-starter-slack#readme"
+}
