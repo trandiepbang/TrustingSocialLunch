@@ -24,7 +24,12 @@ let user_list = [];
 let menu_count = {};
 
 function resetMenu() {
+
     menu_count = {};
+    user_list = [];
+    askAgainTimeOut = null;
+    closeDealTimeout = null;
+
 }
 
 controller.on('direct_mention', function (bot, message) {
@@ -50,10 +55,8 @@ setTimeout(function () {
                 config.closeDealTimeout = '3600000';
                 config.setAskAgain = '900000';
             }
-            
+            start();
         }, t);
-
-
     });
 }, 2000);
 
@@ -79,7 +82,6 @@ function buildingUserList() {
         });
     }
 }
-
 function startAsking() {
     botMethod.getMenu("monday", (menu_list) => {
         if (user_list.length < 1) {
@@ -190,7 +192,6 @@ function SummarizeTotal(list_data) {
 
                             final_list += "Tổng tiền phải trả : " + total + ".000 VND";
                             resetMenu();
-
                             botMethod.makeAnnounce(config.channel, 'Hoá đơn !!!', final_list);
 
                         }, 2000);
