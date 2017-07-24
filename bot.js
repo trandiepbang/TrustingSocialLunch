@@ -50,9 +50,7 @@ setTimeout(function () {
                 config.closeDealTimeout = '3600000';
                 config.setAskAgain = '900000';
             }
-
             
-
         }, t);
 
 
