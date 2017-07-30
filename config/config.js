@@ -1,9 +1,11 @@
 const config = {
     botToken: '',
     askAgainTimeOut:'900000',
-    closeDealTimeout:'1800000',
+    closeDealTimeout:'3600000',
     // askAgainTimeOut: '40000',
     // closeDealTimeout: '65000',
-    channel: 'C6CL1CFB6',
+    cancel:'#huy',
+    excludeList:['U5TESKKPB'],
+    channel: 'C6D2N7EDR'
 };
 module.exports = config;

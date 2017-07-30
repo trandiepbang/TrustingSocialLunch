@@ -1,16 +1,16 @@
 function generate({
     title,
+    index,
     price
 }) {
-    return `${title} - ${price} VND `;
+    return ` # ${index} - ${title} - ${price} VND`;
 }
 
 function generateReceipt({
     name,
-    pic,
     food
 }) {
-    return `${name} - ${food}`;
+    return `${name} - ${food}`; 
 }
 
 module.exports = {

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 const later = require('later');
 const natural = require('natural');
+const removeDiacritics = require('diacritics').remove;
 
 mongoose.Promise = global.Promise;
 
@@ -30,6 +31,7 @@ module.exports = {
     getDate,
     natural,
     moment,
+    removeDiacritics,
     dataModel,
     later
 };
