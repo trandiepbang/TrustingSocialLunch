@@ -57,7 +57,12 @@ controller.hears(['bang01'], 'direct_message', function (bot, message) {
     start();
     setRemind(bot);
 });
-
+controller.hears(['close_deal'], 'direct_message', function (bot, message) {
+    console.log(message);
+    bot.reply(message, 'Ok starting');
+    config.closeDealTimeout = '1000';
+    setCloseDeal();
+});
 
 //
 
@@ -88,11 +93,11 @@ function startBot() {
                 config.closeDealTimeout = '3600000';
                 start();
                 setRemind(bot);
-            }, t);
+            }, t); 
         });
     }, 3000);
-}
-
+} 
+ 
 
 
 controller.on('rtm_close', function (bot, err) {

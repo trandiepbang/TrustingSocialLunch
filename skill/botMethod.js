@@ -66,9 +66,10 @@ function getListUsers(mustOnline = false, callback) {
 function getMenu(date, callback) {
     const lunch_list = getLunchListData(date);
     let food_list = [];
+
     function com_data(com_data, i, array) {
         console.log(com_data);
-        
+
         com_data.index = i;
         food_list.push(template.generate(com_data));
 
@@ -93,7 +94,9 @@ function send(user_id, pickDate, send_data, _callback) {
                 pattern: /(yes|okay|ok|um|coá|có|yess|yeess|ừm|uh|co).*/gi,
                 callback: function (response, convo) {
                     console.log(response);
-                    send_data.push("Nhập #huy sẽ huỷ");
+                    if (send_data !== null && send_data.indexOf("Nhập #huy sẽ huỷ") < 0) {
+                        send_data.push("Nhập #huy sẽ huỷ");
+                    }  
                     convo.addQuestion('Đây là menu cho bữa sau . Bạn muốn ăn gì ? \r\n ' + send_data.join('\r\n'), [{
                         pattern: /.*/gi,
                         callback: function (response, convo) {
